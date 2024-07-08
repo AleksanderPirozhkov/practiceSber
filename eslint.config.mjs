@@ -3,6 +3,9 @@ import { FlatCompat } from '@eslint/eslintrc';
 const compat = new FlatCompat();
 
 export default [
+  // ...compat.extends({
+  //   lintOnSave: false,
+  // })
   ...compat.config({
     extends: ['airbnb', 'airbnb/hooks'],
     rules: {
@@ -11,6 +14,7 @@ export default [
       'react/jsx-uses-react': 0,
       'import/no-named-as-default': 0,
       'import/no-named-as-default-member': 0,
+      'linebreak-style': ['error', 'windows'],
     },
     env: {
       browser: true,
