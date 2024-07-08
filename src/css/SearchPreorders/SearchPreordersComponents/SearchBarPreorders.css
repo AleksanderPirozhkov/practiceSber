@@ -1,0 +1,8 @@
+.search-bar-preorders__content {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  /* align-items: center; */
+  gap: 20px;
+  padding-bottom: 20px;
+}

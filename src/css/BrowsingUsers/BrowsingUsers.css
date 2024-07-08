@@ -1,0 +1,26 @@
+.browsing-users {
+  display: flex;
+  flex-direction: column;
+}
+
+.browsing-users__header {
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  justify-content: flex-end;
+  align-items: center;
+  border-radius: 20px;
+  border: 2px solid black;
+  margin-left: 10px;
+  margin-right: 10px;
+  flex-basis: 90%;
+}
+
+.browsing-users__header-content {
+  padding: 10px;
+}
+
+.browsing-users__content {
+  flex-basis: 10%;
+  background-color: whitesmoke;
+}

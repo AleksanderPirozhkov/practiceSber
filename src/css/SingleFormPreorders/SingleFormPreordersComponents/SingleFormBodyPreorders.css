@@ -1,0 +1,23 @@
+.single-form-body-preorders {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  flex-basis: content;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 25px;
+  background-color: skyblue;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.single-form-body-preorders__row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+}

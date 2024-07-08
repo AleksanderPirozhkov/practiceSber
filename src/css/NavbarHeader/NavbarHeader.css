@@ -1,0 +1,10 @@
+.navbar-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+  color: white;
+  background-color: blue;
+  padding: 20px;
+}

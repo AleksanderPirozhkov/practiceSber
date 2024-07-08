@@ -1,0 +1,8 @@
+.search-datacenters {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-datacenters__pagination {
+  align-self: flex-end;
+}

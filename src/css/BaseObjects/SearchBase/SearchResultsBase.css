@@ -1,0 +1,4 @@
+.search-results-Base {
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,8 @@
+.search-preorders {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-preorders__pagination {
+  align-self: flex-end;
+}

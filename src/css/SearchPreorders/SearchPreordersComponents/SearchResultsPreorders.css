@@ -1,0 +1,4 @@
+.search-results-preorders {
+  display: flex;
+  flex-direction: column;
+}
