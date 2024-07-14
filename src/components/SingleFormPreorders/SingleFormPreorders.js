@@ -8,66 +8,119 @@ import SingleFormBodyPreorders from './SingleFormPreordersComponents/SingleFormB
 import '../../css/SingleFormPreorders/SingleFormPreorders.css';
 
 export default function SingleFormPreorders({ id, closeEvent }) {
-  let preorderId = id;
+  let preorderId = parseInt(id, 10);
 
-  const [configurationId, setConfigurationId] = React.useState(null);
-  const [datacenterIds, setDatacenterIds] = React.useState([]);
-  const [environmentId, setEnvironmentId] = React.useState(null);
-  const [status, setStatus] = React.useState('');
+  const statusOptionsEnum = {
+    statusNew: 'NEW',
+    statusApproved: 'APPROVED',
+    statusInWork: 'IN_WORK',
+    statusCompleted: 'COMPLETED',
+    statusCanceled: 'СANCELED',
+  };
+
+  const [configuration, setConfiguration] = React.useState(null);
+  const [datacenters, setDatacenters] = React.useState([]);
+  const [environment, setEnvironment] = React.useState(null);
+  const [status, setStatus] = React.useState(statusOptionsEnum.statusNew);
   const [preorderType, setPreorderType] = React.useState('');
-  const [isReplication, setIsReplication] = React.useState(null);
+  const [isReplication, setIsReplication] = React.useState(false);
   const [regNumber, setRegNumber] = React.useState('');
 
-  const onConfigurationChanged = (e) => setConfigurationId(e.target.value);
-  const onDatacentersChanged = (e) => setDatacenterIds(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value);
-  const onEnvironmentChanged = (e) => setEnvironmentId(e.target.value);
-  const isReplicationEnum = {
-    exist: 'Yes',
-    noExist: 'No',
+  const onConfigurationChanged = (e) => setConfiguration(e.target.value);
+  const onDatacentersChanged = async (e) => {
+    const datacenterPromises = Object
+      .values(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)
+      .map(async (value) => {
+        if (value) {
+          return Crud.getDatacenter(value);
+        }
+        return null;
+      })
+      .filter((value) => value);
+    const datacentersArray = await Promise.all(datacenterPromises);
+    setDatacenters(datacentersArray);
   };
-  const onIsReplicationChanged = (e) => setIsReplication(e.target.value);
+  const onEnvironmentChanged = (e) => setEnvironment(e.target.value);
+  const onIsReplicationChanged = (e) => setIsReplication(e.target.checked);
   const onRegNumberChanged = (e) => setRegNumber(e.target.value);
   const onStatusChanged = (e) => setStatus(e.target.value);
   const onPreorderTypeChanged = (e) => setPreorderType(e.target.value);
 
+  const [errors, setErrors] = React.useState(null);
+
   const onSaveClicked = async () => {
-    const configuration = await Crud.getConfiguration(configurationId);
-    const environment = await Crud.getEnvironment(environmentId);
-    let datacenters = [];
-    const replication = (isReplication !== '' ? (isReplication === isReplicationEnum.exist) : null);
-    const statusPreorder = status;
-    const preorderTypePreorder = preorderType;
+    const isFormValid = () => (
+      regNumber !== ''
+        && configuration
+        && environment
+        && datacenters.length > 0
+        && status
+        && preorderType
+    );
 
-    let isUpdate = true;
+    if (isFormValid()) {
+      const configurationPreorder = await Crud.getConfiguration(configuration.id);
+      const environmentPreorder = await Crud.getEnvironment(environment.id);
+      const datacentersPreorder = datacenters;
+      const replicationPreorder = isReplication;
+      const statusPreorder = status;
+      const preorderTypePreorder = preorderType;
 
-    if (preorderId === 0) {
-      const preorders = await Crud.getAllPreorders();
-      preorderId = preorders.length + 1;
-      isUpdate = false;
-    }
-    const datacenterPromises = Object
-      .values(datacenterIds)
-      .map((value) => Crud.getDatacenter(value));
-    datacenters = await Promise.all(datacenterPromises);
+      let isUpdate = true;
 
-    const entity = {
-      id: String(preorderId),
-      regNumber,
-      preorderType: preorderTypePreorder,
-      configurationId: configuration,
-      environmentId: environment,
-      datacenterIds: datacenters,
-      isReplication: replication,
-      status: statusPreorder,
-    };
+      if (preorderId === 0) {
+        const preorders = await Crud.getAllPreorders();
+        preorderId = preorders.length + 1 + 1;
+        isUpdate = false;
+      }
 
-    if (isUpdate) {
-      Crud.updatePreorder(entity);
+      const entity = {
+        id: String(preorderId),
+        regNumber,
+        preorderType: preorderTypePreorder,
+        configurationId: configurationPreorder,
+        environmentId: environmentPreorder,
+        datacenterIds: datacentersPreorder,
+        isReplication: replicationPreorder,
+        status: statusPreorder,
+      };
+
+      if (isUpdate) {
+        Crud.updatePreorder(entity);
+      } else {
+        Crud.createPreorder(entity);
+      }
+
+      closeEvent();
     } else {
-      Crud.createPreorder(entity);
+      const errorsData = {
+        regNumber: false,
+        configuration: false,
+        environment: false,
+        datacenters: false,
+        status: false,
+        preorderType: false,
+      };
+      if (!regNumber || regNumber.trim() === '') {
+        errorsData.regNumber = true;
+      }
+      if (!configuration) {
+        errorsData.configuration = true;
+      }
+      if (!environment) {
+        errorsData.environment = true;
+      }
+      if (datacenters.length === 0) {
+        errorsData.datacenters = true;
+      }
+      if (!status) {
+        errorsData.status = true;
+      }
+      if (!preorderType) {
+        errorsData.preorderType = true;
+      }
+      setErrors(errorsData);
     }
-
-    closeEvent();
   };
 
   const onCloseClicked = () => {
@@ -89,25 +142,17 @@ export default function SingleFormPreorders({ id, closeEvent }) {
           const preorder = await Crud.getPreorder(preorderId);
           if (preorder) {
             if (preorder.configurationId) {
-              setConfigurationId(preorder.configurationId.id);
+              setConfiguration(preorder.configurationId);
             } else {
-              setConfigurationId(null);
+              setConfiguration('');
             }
             if (preorder.environmentId) {
-              setEnvironmentId(preorder.environmentId.id);
+              setEnvironment(preorder.environmentId);
             } else {
-              setEnvironmentId(null);
+              setEnvironment('');
             }
-            setDatacenterIds(preorder.datacenterIds.map((preorderValue) => preorderValue.id));
-            if (preorder.isReplication !== null) {
-              if (preorder.isReplication) {
-                setIsReplication(isReplicationEnum.exist);
-              } else {
-                setIsReplication(isReplicationEnum.noExist);
-              }
-            } else {
-              setIsReplication('');
-            }
+            setDatacenters(preorder.datacenterIds.map((value) => value));
+            setIsReplication(preorder.isReplication);
             setRegNumber(preorder.regNumber);
             setStatus(preorder.status);
             setPreorderType(preorder.preorderType);
@@ -117,7 +162,9 @@ export default function SingleFormPreorders({ id, closeEvent }) {
     };
 
     fetchData();
-  }, [isReplicationEnum.exist, isReplicationEnum.noExist, preorderId]);
+  }, [preorderId]);
+
+  const isNew = id === '0';
 
   return (
     <div
@@ -132,14 +179,15 @@ export default function SingleFormPreorders({ id, closeEvent }) {
       <SingleFormBodyPreorders
         data={
           {
-            configurationId,
-            datacenterIds,
-            environmentId,
+            configuration,
+            datacenters,
+            environment,
             isReplication,
-            isReplicationEnum,
             regNumber,
             status,
             preorderType,
+            isNew,
+            errors,
           }
         }
         events={
@@ -151,11 +199,12 @@ export default function SingleFormPreorders({ id, closeEvent }) {
             onRegNumberChanged,
             onStatusChanged,
             onPreorderTypeChanged,
+            setStatus,
           }
         }
       />
       <SingleFormButtons
-        isExistDelete={id !== 0}
+        isExistDelete={id !== '0'}
         onDeleteClicked={onDeleteClicked}
         onCloseClicked={onCloseClicked}
         onSaveClicked={onSaveClicked}
@@ -165,6 +214,6 @@ export default function SingleFormPreorders({ id, closeEvent }) {
 }
 
 SingleFormPreorders.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   closeEvent: PropTypes.func.isRequired,
 };

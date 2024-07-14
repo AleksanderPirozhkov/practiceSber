@@ -5,11 +5,11 @@ import '../../../../css/BaseObjects/SearchBase/SearchBaseComponents/SearchBarSel
 import PropTypes from 'prop-types';
 
 export default function SearchBarSelect({
-  label, value, options, onChange, color = 'white',
+  label, value = '', options = [], onChange, color = 'white', error = false, isNullVariant = true,
 }) {
   return (
     <div className="search-bar-select">
-      <FormControl>
+      <FormControl error={error}>
         <InputLabel disableAnimation shrink style={{ backgroundColor: color }} id={`${label}-label`}>{label}</InputLabel>
         <Select
           labelId={`${label}-label`}
@@ -17,7 +17,7 @@ export default function SearchBarSelect({
           onChange={onChange}
           className="search-bar-select__select"
         >
-          <MenuItem value="">нет данных</MenuItem>
+          {isNullVariant && (<MenuItem value="">нет данных</MenuItem>)}
           {options}
         </Select>
       </FormControl>
@@ -27,8 +27,14 @@ export default function SearchBarSelect({
 
 SearchBarSelect.propTypes = {
   label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  value: PropTypes.any.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  options: PropTypes.arrayOf(PropTypes.element),
+  // eslint-disable-next-line react/require-default-props
+  error: PropTypes.bool,
+  // eslint-disable-next-line react/require-default-props
+  isNullVariant: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   color: PropTypes.string.isRequired,
 };

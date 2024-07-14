@@ -38,7 +38,7 @@ export default function SearchConfigurations(
     },
   };
 
-  const filteredPreorders = async (
+  const filteredConfigurations = async (
     codePreorder,
     titlePreorder,
     descriptionPreorder,
@@ -82,12 +82,12 @@ export default function SearchConfigurations(
   };
 
   React.useEffect(() => {
-    filteredPreorders(code, title, description, numberOfPage);
-  }, [code, title, description, numberOfPage, filteredPreorders]);
+    filteredConfigurations(code, title, description, numberOfPage);
+  }, [code, title, description, numberOfPage, filteredConfigurations]);
 
   const onCodeChanged = (e) => {
     setCode(e.target.value);
-    filteredPreorders(
+    filteredConfigurations(
       e.target.value,
       title,
       description,
@@ -96,7 +96,7 @@ export default function SearchConfigurations(
   };
   const onTitleChanged = (e) => {
     setTitle(e.target.value);
-    filteredPreorders(
+    filteredConfigurations(
       code,
       e.target.value,
       description,
@@ -105,7 +105,7 @@ export default function SearchConfigurations(
   };
   const onDescriptionChanged = (e) => {
     setDescription(e.target.value);
-    filteredPreorders(
+    filteredConfigurations(
       code,
       title,
       e.target.value,
@@ -115,11 +115,23 @@ export default function SearchConfigurations(
 
   const paginationHandleChange = (e, page) => {
     setNumberOfPage(page);
-    filteredPreorders(
+    filteredConfigurations(
       code,
       title,
       description,
       page,
+    );
+  };
+
+  const clearAll = () => {
+    setCode('');
+    setTitle('');
+    setDescription('');
+    filteredConfigurations(
+      '',
+      '',
+      '',
+      numberOfPage,
     );
   };
 
@@ -141,6 +153,7 @@ export default function SearchConfigurations(
               onCodeChanged,
               onTitleChanged,
               onDescriptionChanged,
+              clearAll,
             }
           }
           isOpenSearchBar={isOpenSearchBar}
@@ -174,7 +187,7 @@ export default function SearchConfigurations(
         style={customStyles}
         contentLabel="Configuration"
       >
-        <SingleFormConfigurations id={selectId} closeEvent={closeModal} />
+        <SingleFormConfigurations id={selectId.toString()} closeEvent={closeModal} />
       </Modal>
       <div
         className="search-configurations__pagination"

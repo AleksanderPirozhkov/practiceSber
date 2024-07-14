@@ -4,6 +4,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -48,12 +49,12 @@ export default function SearchBarPreorders(
         preorderTypeVIRTUALIZATION: 'VIRTUALIZATION',
       };
       setConfigurationsOptions(configurations.map((configuration) => (
-        <MenuItem key={configuration.id} value={configuration.id}>
+        <MenuItem key={configuration.id} value={configuration}>
           {configuration.code}
         </MenuItem>
       )));
       setEnvironmentsOptions(environments.map((environment) => (
-        <MenuItem key={environment.id} value={environment.id}>
+        <MenuItem key={environment.id} value={environment}>
           {environment.code}
         </MenuItem>
       )));
@@ -68,7 +69,7 @@ export default function SearchBarPreorders(
         </MenuItem>
       )));
       setDatacentersOptions(datacenters.map((datacenter) => (
-        <MenuItem key={datacenter.id} value={datacenter.id}>
+        <MenuItem key={datacenter.id} value={datacenter}>
           {datacenter.code}
         </MenuItem>
       )));
@@ -102,14 +103,14 @@ export default function SearchBarPreorders(
             />
             <SearchBarSelect
               label="Конфигурация"
-              value={data.configurationId}
+              value={data.configuration ? data.configuration : ''}
               options={configurationsOptions}
               onChange={events.onConfigurationChanged}
               color="white"
             />
             <SearchBarSelect
               label="Среда"
-              value={data.environmentId}
+              value={data.environment ? data.environment : ''}
               options={environmentsOptions}
               onChange={events.onEnvironmentChanged}
               color="white"
@@ -129,10 +130,10 @@ export default function SearchBarPreorders(
               color="white"
             />
             <FormControl>
-              <InputLabel disableAnimation shrink style={{ backgroundColor: 'white' }} id={`${'ЦОД'}-label`}>ЦОД</InputLabel>
+              <InputLabel disableAnimation shrink style={{ backgroundColor: 'white', zIndex: '0' }} id={`${'ЦОД'}-label`}>ЦОД</InputLabel>
               <Select
                 labelId={`${'ЦОД'}-label`}
-                value={data.datacenterIds}
+                value={data.datacenters}
                 onChange={events.onDatacentersChanged}
                 style={{ width: '160px', height: '60px' }}
                 multiple
@@ -140,20 +141,21 @@ export default function SearchBarPreorders(
                 {datacentersOptions}
               </Select>
             </FormControl>
+            <SearchBarSelect
+              label="Признак репликации"
+              value={data.isReplication}
+              options={
+                Object.values(data.isReplicationEnum).map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {type}
+                  </MenuItem>
+                ))
+              }
+              onChange={events.onIsReplicationChanged}
+              color="white"
+            />
             <div>
-              <SearchBarSelect
-                label="Признак репликации"
-                value={data.isReplication}
-                options={
-                  Object.values(data.isReplicationEnum).map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type}
-                    </MenuItem>
-                  ))
-                }
-                onChange={events.onIsReplicationChanged}
-                color="white"
-              />
+              <Button onClick={events.clearAll}>Очистить все</Button>
             </div>
           </div>
         </AccordionDetails>
@@ -165,13 +167,17 @@ export default function SearchBarPreorders(
 SearchBarPreorders.propTypes = {
   data: PropTypes.shape({
     regNumber: PropTypes.string,
-    configurationId: PropTypes.string,
-    environmentId: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    configuration: PropTypes.any,
+    // eslint-disable-next-line react/forbid-prop-types
+    environment: PropTypes.any,
     status: PropTypes.string,
     preorderType: PropTypes.string,
-    datacenterIds: PropTypes.arrayOf(PropTypes.string),
+    // eslint-disable-next-line react/forbid-prop-types
+    datacenters: PropTypes.arrayOf(PropTypes.any),
     isReplication: PropTypes.string,
-    isReplicationEnum: PropTypes.array,
+    // eslint-disable-next-line react/forbid-prop-types
+    isReplicationEnum: PropTypes.object,
   }).isRequired,
   events: PropTypes.shape({
     onRegNumberChanged: PropTypes.func,
@@ -181,6 +187,7 @@ SearchBarPreorders.propTypes = {
     onPreorderTypeChanged: PropTypes.func,
     onDatacentersChanged: PropTypes.func,
     onIsReplicationChanged: PropTypes.func,
+    clearAll: PropTypes.func,
   }).isRequired,
   isOpenSearchBar: PropTypes.bool.isRequired,
   setOpenSearchBar: PropTypes.func.isRequired,

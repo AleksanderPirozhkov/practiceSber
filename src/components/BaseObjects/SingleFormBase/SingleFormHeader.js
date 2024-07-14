@@ -31,9 +31,11 @@ export default function SingleFormHeader({
       </div>
 
       <div>
-        <SingleFormHeaderStatus
-          status={itemStatus}
-        />
+        {itemStatus && (
+          <SingleFormHeaderStatus
+            status={itemStatus}
+          />
+        )}
       </div>
     </div>
   );
@@ -43,5 +45,6 @@ SingleFormHeader.propTypes = {
   image: PropTypes.element.isRequired,
   itemName: PropTypes.string.isRequired,
   itemLabel: PropTypes.string.isRequired,
-  itemStatus: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  itemStatus: PropTypes.string,
 };

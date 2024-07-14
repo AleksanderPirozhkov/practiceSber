@@ -15,31 +15,57 @@ export default function SingleFormConfigurations({ id, closeEvent }) {
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onDescriptionChanged = (e) => setDescription(e.target.value);
 
-  let entityId = id;
+  let entityId = parseInt(id, 10);
+
+  const [errors, setErrors] = React.useState(null);
 
   const onSaveClicked = async () => {
-    let isUpdate = true;
+    const isFormValid = () => (
+      code !== ''
+        && title !== ''
+        && description !== ''
+    );
 
-    if (entityId === 0) {
-      const configurations = await Crud.getAllConfigurations();
-      entityId = configurations.length + 1;
-      isUpdate = false;
-    }
+    if (isFormValid()) {
+      let isUpdate = true;
 
-    const entity = {
-      id: String(entityId),
-      code,
-      title,
-      description,
-    };
+      if (entityId === 0) {
+        const configurations = await Crud.getAllConfigurations();
+        entityId = configurations.length + 1 + 1;
+        isUpdate = false;
+      }
 
-    if (isUpdate) {
-      Crud.updateConfiguration(entity);
+      const entity = {
+        id: String(entityId),
+        code,
+        title,
+        description,
+      };
+
+      if (isUpdate) {
+        Crud.updateConfiguration(entity);
+      } else {
+        Crud.createConfiguration(entity);
+      }
+
+      closeEvent();
     } else {
-      Crud.createConfiguration(entity);
+      const errorsData = {
+        code: false,
+        title: false,
+        description: false,
+      };
+      if (!code || code.trim() === '') {
+        errorsData.code = true;
+      }
+      if (!title || title.trim() === '') {
+        errorsData.title = true;
+      }
+      if (!description || description.trim() === '') {
+        errorsData.description = true;
+      }
+      setErrors(errorsData);
     }
-
-    closeEvent();
   };
 
   const onCloseClicked = () => {
@@ -86,6 +112,7 @@ export default function SingleFormConfigurations({ id, closeEvent }) {
             code,
             title,
             description,
+            errors,
           }
         }
         events={
@@ -100,13 +127,13 @@ export default function SingleFormConfigurations({ id, closeEvent }) {
         onDeleteClicked={onDeleteClicked}
         onCloseClicked={onCloseClicked}
         onSaveClicked={onSaveClicked}
-        isExistDelete={id !== 0}
+        isExistDelete={id !== '0'}
       />
     </div>
   );
 }
 
 SingleFormConfigurations.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   closeEvent: PropTypes.func.isRequired,
 };

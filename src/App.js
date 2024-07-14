@@ -26,7 +26,7 @@ function App() {
     <Router>
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '250px 1555px',
+        gridTemplateColumns: '250px 1670px',
         gridTemplateRows: '250px 600px',
       }}
       >

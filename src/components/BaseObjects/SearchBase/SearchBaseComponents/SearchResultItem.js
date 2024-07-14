@@ -21,7 +21,7 @@ export default function SearchResultItem({ id, name, event }) {
 }
 
 SearchResultItem.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   event: PropTypes.func.isRequired,
 };

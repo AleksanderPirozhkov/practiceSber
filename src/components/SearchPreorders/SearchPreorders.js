@@ -15,12 +15,13 @@ export default function SearchPreorders(
   },
 ) {
   const [regNumber, setRegNumber] = React.useState('');
-  const [configurationId, setConfigurationId] = React.useState('');
-  const [environmentId, setEnvironmentId] = React.useState('');
+  const [configuration, setConfiguration] = React.useState();
+  const [environment, setEnvironment] = React.useState();
   const [status, setStatus] = React.useState('');
   const [preorderType, setPreorderType] = React.useState('');
   const [isReplication, setIsReplication] = React.useState('');
-  const [datacenterIds, setDatacenterIds] = React.useState([]);
+  const [datacenters, setDatacenters] = React.useState([]);
+
   const [numberOfFound, setNumberOfFound] = React.useState(0);
   const [filter, setFilter] = React.useState([]);
   const [numberOfPages, setNumberOfPages] = React.useState(1);
@@ -33,11 +34,11 @@ export default function SearchPreorders(
 
   const filteredPreorders = async (
     regNumberPreorder,
-    configurationIdPreorder,
-    environmentIdPreorder,
+    configurationPreorder,
+    environmentPreorder,
     statusPreorder,
     preorderTypePreorder,
-    datacenterIdsPreorder,
+    datacentersPreorder,
     isReplicationPreorder,
     numberOfPagePreorder,
   ) => {
@@ -45,11 +46,11 @@ export default function SearchPreorders(
     if (regNumberPreorder && regNumberPreorder !== '') {
       searchObject.regNumber = regNumberPreorder.trim();
     }
-    if (configurationIdPreorder && configurationIdPreorder !== '') {
-      searchObject.configurationId = { id: Number.parseInt(configurationIdPreorder, 10) };
+    if (configurationPreorder && configurationPreorder.id) {
+      searchObject.configuration = { id: Number.parseInt(configurationPreorder.id, 10) };
     }
-    if (environmentIdPreorder && environmentIdPreorder !== '') {
-      searchObject.environmentId = { id: Number.parseInt(environmentIdPreorder, 10) };
+    if (environmentPreorder && environmentPreorder.id) {
+      searchObject.environment = { id: Number.parseInt(environmentPreorder.id, 10) };
     }
     if (statusPreorder && statusPreorder !== '') {
       searchObject.status = statusPreorder;
@@ -58,10 +59,10 @@ export default function SearchPreorders(
       searchObject.preorderType = preorderTypePreorder;
     }
 
-    if (datacenterIdsPreorder && datacenterIdsPreorder.length !== 0) {
-      searchObject.datacenterIds = datacenterIdsPreorder
+    if (datacentersPreorder && datacentersPreorder.length !== 0) {
+      searchObject.datacenters = datacentersPreorder
         .map(
-          (datacenterId) => Number.parseInt(datacenterId, 10),
+          (datacenter) => Number.parseInt(datacenter.id, 10),
         );
     }
     if (isReplicationPreorder && isReplicationPreorder !== '') {
@@ -88,60 +89,78 @@ export default function SearchPreorders(
   React.useEffect(() => {
     filteredPreorders(
       regNumber,
-      configurationId,
-      environmentId,
+      configuration,
+      environment,
       status,
       preorderType,
-      datacenterIds,
+      datacenters,
       isReplication,
       numberOfPage,
     );
   }, [regNumber,
-    configurationId,
-    environmentId,
+    configuration,
+    environment,
     status,
     preorderType,
-    datacenterIds,
+    datacenters,
     isReplication,
     numberOfPage,
     filteredPreorders,
   ]);
-
+  const clearAll = () => {
+    setRegNumber('');
+    setConfiguration('');
+    setEnvironment('');
+    setStatus('');
+    setPreorderType('');
+    setDatacenters([]);
+    setIsReplication('');
+    filteredPreorders(
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      numberOfPage,
+    );
+  };
   const onRegNumberChanged = (e) => {
     setRegNumber(e.target.value);
     filteredPreorders(
       e.target.value,
-      configurationId,
-      environmentId,
+      configuration,
+      environment,
       status,
       preorderType,
-      datacenterIds,
+      datacenters,
       isReplication,
       numberOfPage,
     );
   };
   const onConfigurationChanged = (e) => {
-    setConfigurationId(e.target.value);
+    setConfiguration(e.target.value);
     filteredPreorders(
       regNumber,
       e.target.value,
-      environmentId,
+      environment,
       status,
       preorderType,
-      datacenterIds,
+      datacenters,
       isReplication,
       numberOfPage,
     );
   };
   const onEnvironmentChanged = (e) => {
-    setEnvironmentId(e.target.value);
+    setEnvironment(e.target.value);
     filteredPreorders(
       regNumber,
-      configurationId,
+      configuration,
       e.target.value,
       status,
       preorderType,
-      datacenterIds,
+      datacenters,
       isReplication,
       numberOfPage,
     );
@@ -150,67 +169,63 @@ export default function SearchPreorders(
     setStatus(e.target.value);
     filteredPreorders(
       regNumber,
-      configurationId,
-      environmentId,
+      configuration,
+      environment,
       e.target.value,
       preorderType,
-      datacenterIds,
+      datacenters,
       isReplication,
       numberOfPage,
     );
   };
-
   const onPreorderTypeChanged = (e) => {
     setPreorderType(e.target.value);
     filteredPreorders(
       regNumber,
-      configurationId,
-      environmentId,
+      configuration,
+      environment,
       status,
       e.target.value,
-      datacenterIds,
+      datacenters,
       isReplication,
       numberOfPage,
     );
   };
-
   const onDatacentersChanged = (e) => {
-    setDatacenterIds(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value);
+    setDatacenters(e.target.value);
     filteredPreorders(
       regNumber,
-      configurationId,
-      environmentId,
+      configuration,
+      environment,
       status,
       preorderType,
-      (typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value),
+      e.target.value,
       isReplication,
       numberOfPage,
     );
   };
-
   const onIsReplicationChanged = (e) => {
     setIsReplication(e.target.value);
     filteredPreorders(
       regNumber,
-      configurationId,
-      environmentId,
+      configuration,
+      environment,
       status,
       preorderType,
-      datacenterIds,
+      datacenters,
       e.target.value,
       numberOfPage,
     );
   };
-
   const paginationHandleChange = (e, page) => {
     setNumberOfPage(page);
     filteredPreorders(
       regNumber,
-      configurationId,
-      environmentId,
+      configuration,
+      environment,
       status,
       preorderType,
-      datacenterIds,
+      datacenters,
       isReplication,
       page,
     );
@@ -225,11 +240,11 @@ export default function SearchPreorders(
           data={
             {
               regNumber,
-              configurationId,
-              environmentId,
+              configuration,
+              environment,
               status,
               preorderType,
-              datacenterIds,
+              datacenters,
               isReplication,
               isReplicationEnum,
             }
@@ -243,6 +258,7 @@ export default function SearchPreorders(
               onPreorderTypeChanged,
               onDatacentersChanged,
               onIsReplicationChanged,
+              clearAll,
             }
           }
           isOpenSearchBar={isOpenSearchBar}

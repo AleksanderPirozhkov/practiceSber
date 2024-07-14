@@ -5,13 +5,14 @@ import '../../../../css/BaseObjects/SearchBase/SearchBaseComponents/SearchBarTex
 import PropTypes from 'prop-types';
 
 export default function SearchBarTextBox({
-  label, value, onChange, icon, multiline,
+  label, value = '', onChange, icon, multiline = false, error = false,
 }) {
   return (
     <div
       className="search-bar-textbox"
     >
       <TextField
+        error={error}
         multiline={multiline}
         label={label}
         value={value}
@@ -32,6 +33,10 @@ SearchBarTextBox.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  icon: PropTypes.string.isRequired,
-  multiline: PropTypes.bool.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  icon: PropTypes.element,
+  // eslint-disable-next-line react/require-default-props
+  multiline: PropTypes.bool,
+  // eslint-disable-next-line react/require-default-props
+  error: PropTypes.bool,
 };

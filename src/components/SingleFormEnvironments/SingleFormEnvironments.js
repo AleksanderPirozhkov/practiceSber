@@ -8,7 +8,7 @@ import SingleFormBody from '../BaseObjects/SingleFormBase/SingleFormBody';
 import '../../css/SingleFormEnvironments/SingleFormEnvironments.css';
 
 export default function SingleFormEnvironments({ id, closeEvent }) {
-  let entityId = id;
+  let entityId = parseInt(id, 10);
 
   const [code, setCode] = React.useState('');
   const [title, setTitle] = React.useState('');
@@ -17,29 +17,55 @@ export default function SingleFormEnvironments({ id, closeEvent }) {
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onDescriptionChanged = (e) => setDescription(e.target.value);
 
+  const [errors, setErrors] = React.useState(null);
+
   const onSaveClicked = async () => {
-    let isUpdate = true;
+    const isFormValid = () => (
+      code !== ''
+        && title !== ''
+        && description !== ''
+    );
 
-    if (entityId === 0) {
-      const environments = await Crud.getAllEnvironments();
-      entityId = environments.length + 1;
-      isUpdate = false;
-    }
+    if (isFormValid()) {
+      let isUpdate = true;
 
-    const entity = {
-      id: String(entityId),
-      code,
-      title,
-      description,
-    };
+      if (entityId === 0) {
+        const environments = await Crud.getAllEnvironments();
+        entityId = environments.length + 1 + 1;
+        isUpdate = false;
+      }
 
-    if (isUpdate) {
-      Crud.updateEnvironment(entity);
+      const entity = {
+        id: String(entityId),
+        code,
+        title,
+        description,
+      };
+
+      if (isUpdate) {
+        Crud.updateEnvironment(entity);
+      } else {
+        Crud.createEnvironment(entity);
+      }
+
+      closeEvent();
     } else {
-      Crud.createEnvironment(entity);
+      const errorsData = {
+        code: false,
+        title: false,
+        description: false,
+      };
+      if (!code || code.trim() === '') {
+        errorsData.code = true;
+      }
+      if (!title || title.trim() === '') {
+        errorsData.title = true;
+      }
+      if (!description || description.trim() === '') {
+        errorsData.description = true;
+      }
+      setErrors(errorsData);
     }
-
-    closeEvent();
   };
 
   const onCloseClicked = () => {
@@ -86,6 +112,7 @@ export default function SingleFormEnvironments({ id, closeEvent }) {
             code,
             title,
             description,
+            errors,
           }
         }
         events={
@@ -100,13 +127,13 @@ export default function SingleFormEnvironments({ id, closeEvent }) {
         onDeleteClicked={onDeleteClicked}
         onCloseClicked={onCloseClicked}
         onSaveClicked={onSaveClicked}
-        isExistDelete={id !== 0}
+        isExistDelete={id !== '0'}
       />
     </div>
   );
 }
 
 SingleFormEnvironments.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   closeEvent: PropTypes.func.isRequired,
 };

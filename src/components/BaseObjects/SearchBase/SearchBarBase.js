@@ -1,4 +1,6 @@
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import {
+  Accordion, AccordionDetails, AccordionSummary, Button,
+} from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SearchIcon from '@mui/icons-material/Search';
 import PropTypes from 'prop-types';
@@ -47,6 +49,7 @@ export default function SearchBarBase(
               onChange={events.onDescriptionChanged}
               icon={<SearchIcon />}
             />
+            <Button onClick={events.clearAll}>Очистить все</Button>
           </div>
         </AccordionDetails>
       </Accordion>
@@ -64,6 +67,7 @@ SearchBarBase.propTypes = {
     onCodeChanged: PropTypes.func,
     onTitleChanged: PropTypes.func,
     onDescriptionChanged: PropTypes.func,
+    clearAll: PropTypes.func,
   }).isRequired,
   isOpenSearchBar: PropTypes.bool.isRequired,
   setOpenSearchBar: PropTypes.func.isRequired,

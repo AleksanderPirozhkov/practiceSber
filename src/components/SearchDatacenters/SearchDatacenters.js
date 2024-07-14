@@ -38,7 +38,7 @@ export default function SearchDatacenters(
     },
   };
 
-  const filteredPreorders = async (
+  const filteredDatacenters = async (
     codePreorder,
     titlePreorder,
     descriptionPreorder,
@@ -82,12 +82,12 @@ export default function SearchDatacenters(
   };
 
   React.useEffect(() => {
-    filteredPreorders(code, title, description, numberOfPage);
-  }, [code, title, description, numberOfPage, filteredPreorders]);
+    filteredDatacenters(code, title, description, numberOfPage);
+  }, [code, title, description, numberOfPage, filteredDatacenters]);
 
   const onCodeChanged = (e) => {
     setCode(e.target.value);
-    filteredPreorders(
+    filteredDatacenters(
       e.target.value,
       title,
       description,
@@ -96,7 +96,7 @@ export default function SearchDatacenters(
   };
   const onTitleChanged = (e) => {
     setTitle(e.target.value);
-    filteredPreorders(
+    filteredDatacenters(
       code,
       e.target.value,
       description,
@@ -105,7 +105,7 @@ export default function SearchDatacenters(
   };
   const onDescriptionChanged = (e) => {
     setDescription(e.target.value);
-    filteredPreorders(
+    filteredDatacenters(
       code,
       title,
       e.target.value,
@@ -115,11 +115,23 @@ export default function SearchDatacenters(
 
   const paginationHandleChange = (e, page) => {
     setNumberOfPage(page);
-    filteredPreorders(
+    filteredDatacenters(
       code,
       title,
       description,
       page,
+    );
+  };
+
+  const clearAll = () => {
+    setCode('');
+    setTitle('');
+    setDescription('');
+    filteredDatacenters(
+      '',
+      '',
+      '',
+      numberOfPage,
     );
   };
 
@@ -141,6 +153,7 @@ export default function SearchDatacenters(
               onCodeChanged,
               onTitleChanged,
               onDescriptionChanged,
+              clearAll,
             }
           }
           isOpenSearchBar={isOpenSearchBar}
@@ -172,7 +185,7 @@ export default function SearchDatacenters(
         style={customStyles}
         contentLabel="Datacenter"
       >
-        <SingleFormDatacenters id={selectId} closeEvent={closeModal} />
+        <SingleFormDatacenters id={selectId.toString()} closeEvent={closeModal} />
       </Modal>
       <div
         className="search-datacenters__pagination"

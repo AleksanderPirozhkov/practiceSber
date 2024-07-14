@@ -35,15 +35,15 @@ export default function WorkBarPreorders() {
 
   function contentModal() {
     if (location.pathname === '/configurations') {
-      return <SingleFormConfigurations id={0} closeEvent={closeModal} />;
+      return <SingleFormConfigurations id="0" closeEvent={closeModal} />;
     }
     if (location.pathname === '/datacenters') {
-      return <SingleFormDatacenters id={0} closeEvent={closeModal} />;
+      return <SingleFormDatacenters id="0" closeEvent={closeModal} />;
     }
     if (location.pathname === '/environments') {
-      return <SingleFormEnvironments id={0} closeEvent={closeModal} />;
+      return <SingleFormEnvironments id="0" closeEvent={closeModal} />;
     }
-    return <SingleFormPreorders id={0} closeEvent={closeModal} />;
+    return <SingleFormPreorders id="0" closeEvent={closeModal} />;
   }
 
   return (

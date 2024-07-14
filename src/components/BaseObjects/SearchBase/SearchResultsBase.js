@@ -66,7 +66,7 @@ SearchResultsBase.propTypes = {
   data: PropTypes.shape({
     filter: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.number,
+        id: PropTypes.string,
         code: PropTypes.string,
         title: PropTypes.string,
       }).isRequired,

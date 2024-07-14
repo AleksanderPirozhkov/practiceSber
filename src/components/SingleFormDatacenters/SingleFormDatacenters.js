@@ -8,7 +8,7 @@ import SingleFormBody from '../BaseObjects/SingleFormBase/SingleFormBody';
 import '../../css/SingleFormDatacenters/SingleFormDatacenters.css';
 
 export default function SingleFormDatacenters({ id, closeEvent }) {
-  let entityId = id;
+  let entityId = parseInt(id, 10);
 
   const [code, setCode] = React.useState('');
   const [title, setTitle] = React.useState('');
@@ -17,29 +17,55 @@ export default function SingleFormDatacenters({ id, closeEvent }) {
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onDescriptionChanged = (e) => setDescription(e.target.value);
 
+  const [errors, setErrors] = React.useState(null);
+
   const onSaveClicked = async () => {
-    let isUpdate = true;
+    const isFormValid = () => (
+      code !== ''
+        && title !== ''
+        && description !== ''
+    );
 
-    if (entityId === 0) {
-      const datacenters = await Crud.getAllDatacenters();
-      entityId = datacenters.length + 1;
-      isUpdate = false;
-    }
+    if (isFormValid()) {
+      let isUpdate = true;
 
-    const entity = {
-      id: String(entityId),
-      code,
-      title,
-      description,
-    };
+      if (entityId === 0) {
+        const datacenters = await Crud.getAllDatacenters();
+        entityId = datacenters.length + 1 + 1;
+        isUpdate = false;
+      }
 
-    if (isUpdate) {
-      Crud.updateDatacenter(entity);
+      const entity = {
+        id: String(entityId),
+        code,
+        title,
+        description,
+      };
+
+      if (isUpdate) {
+        Crud.updateDatacenter(entity);
+      } else {
+        Crud.createDatacenter(entity);
+      }
+
+      closeEvent();
     } else {
-      Crud.createDatacenter(entity);
+      const errorsData = {
+        code: false,
+        title: false,
+        description: false,
+      };
+      if (!code || code.trim() === '') {
+        errorsData.code = true;
+      }
+      if (!title || title.trim() === '') {
+        errorsData.title = true;
+      }
+      if (!description || description.trim() === '') {
+        errorsData.description = true;
+      }
+      setErrors(errorsData);
     }
-
-    closeEvent();
   };
 
   const onCloseClicked = () => {
@@ -87,6 +113,7 @@ export default function SingleFormDatacenters({ id, closeEvent }) {
             code,
             title,
             description,
+            errors,
           }
         }
         events={
@@ -101,13 +128,13 @@ export default function SingleFormDatacenters({ id, closeEvent }) {
         onDeleteClicked={onDeleteClicked}
         onCloseClicked={onCloseClicked}
         onSaveClicked={onSaveClicked}
-        isExistDelete={id !== 0}
+        isExistDelete={id !== '0'}
       />
     </div>
   );
 }
 
 SingleFormDatacenters.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   closeEvent: PropTypes.func.isRequired,
 };

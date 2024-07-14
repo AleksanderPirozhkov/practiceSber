@@ -17,11 +17,13 @@ export default function SingleFormBody({
           label="Код"
           value={data.code}
           onChange={events.onCodeChanged}
+          error={data.errors && (data.errors.code)}
         />
         <SearchBarTextBox
           label="Название"
           value={data.title}
           onChange={events.onTitleChanged}
+          error={data.errors && (data.errors.title)}
         />
       </div>
       <SearchBarTextBox
@@ -29,6 +31,7 @@ export default function SingleFormBody({
         label="Описание"
         value={data.description}
         onChange={events.onDescriptionChanged}
+        error={data.errors && (data.errors.description)}
       />
     </div>
   );
@@ -39,6 +42,11 @@ SingleFormBody.propTypes = {
     code: PropTypes.string,
     title: PropTypes.string,
     description: PropTypes.string,
+    errors: PropTypes.shape({
+      code: PropTypes.bool,
+      title: PropTypes.bool,
+      description: PropTypes.bool,
+    }),
   }).isRequired,
   events: PropTypes.shape({
     onCodeChanged: PropTypes.func,

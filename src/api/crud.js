@@ -53,15 +53,15 @@ async function getAllPreorders() {
 async function searchPreorders(filter) {
   try {
     const response = await getAllPreorders();
-    const filteredResponse = response.filter((obj) => {
-      if ((obj.preorderType === null && filter.preorderType)
-        || (obj.configurationId === null && filter.configurationId)
-        || (obj.environmentId === null && filter.environmentId)
-        || (obj.datacenterIds === null && filter.datacenterIds)
-        || (obj.status === null && filter.status)
-      ) {
-        return false;
-      }
+    let filteredResponse = response.filter((obj) => {
+      // if ((obj.preorderType === null && filter.preorderType)
+      //   || (obj.configurationId === null && filter.configurationId)
+      //   || (obj.environmentId === null && filter.environmentId)
+      //   || (obj.datacenterIds === null && filter.datacenterIds)
+      //   || (obj.status === null && filter.status)
+      // ) {
+      //   return false;
+      // }
       if (filter.regNumber
         && !(obj.regNumber.toLowerCase().includes(filter.regNumber.toLowerCase()))) {
         return false;
@@ -71,18 +71,19 @@ async function searchPreorders(filter) {
         && !(obj.preorderType.includes(filter.preorderType))) {
         return false;
       }
-      if (filter.configurationId
-        && !(obj.configurationId.id === filter.configurationId.id)) {
+      if (filter.configuration
+        && obj.configurationId
+        && !(obj.configurationId.id === filter.configuration.id)) {
         return false;
       }
-      if (filter.environmentId
+      if (filter.environment
         && obj.environmentId
-        && !(obj.environmentId.id === filter.environmentId.id)) {
+        && !(obj.environmentId.id === filter.environment.id)) {
         return false;
       }
-      if (filter.datacenterIds
+      if (filter.datacenters
         && obj.datacenterIds
-        && !(filter.datacenterIds
+        && !(filter.datacenters
           .every(
             (id) => obj.datacenterIds
               .map(
@@ -110,6 +111,14 @@ async function searchPreorders(filter) {
         return false;
       }
       return true;
+    });
+    filteredResponse = filteredResponse.map((preorder) => {
+      return {
+        ...preorder,
+        configuration: preorder.configurationId,
+        environment: preorder.environmentId,
+        datacenters: preorder.datacenterIds,
+      };
     });
     return filteredResponse;
   } catch (error) {

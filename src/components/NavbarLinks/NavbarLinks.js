@@ -1,4 +1,7 @@
-import HealthAndSafetySharp from '@mui/icons-material/HealthAndSafetySharp';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LandscapeIcon from '@mui/icons-material/Landscape';
+import DataUsageIcon from '@mui/icons-material/DataUsage';
 import NavbarLink from './NavbarLinksComponents/NavbarLink';
 import '../../css/NavbarLinks/NavbarLinks.css';
 
@@ -7,25 +10,25 @@ export default function NavbarLinks() {
     id: 'preorders',
     link: '/preorders',
     text: 'Потребности',
-    svg: <HealthAndSafetySharp />,
+    svg: <AssignmentIcon />,
   },
   {
     id: 'configurations',
     link: '/configurations',
     text: 'Конфигурации',
-    svg: <HealthAndSafetySharp />,
+    svg: <SettingsIcon />,
   },
   {
     id: 'environments',
     link: '/environments',
     text: 'Среды',
-    svg: <HealthAndSafetySharp />,
+    svg: <LandscapeIcon />,
   },
   {
     id: 'datacenters',
     link: '/datacenters',
     text: 'ЦОДы',
-    svg: <HealthAndSafetySharp />,
+    svg: <DataUsageIcon />,
   }];
   return (
     <div

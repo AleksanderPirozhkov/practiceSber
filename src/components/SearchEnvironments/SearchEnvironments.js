@@ -38,7 +38,7 @@ export default function SearchEnvironments(
     },
   };
 
-  const filteredPreorders = async (
+  const filteredEnvironments = async (
     codePreorder,
     titlePreorder,
     descriptionPreorder,
@@ -70,7 +70,6 @@ export default function SearchEnvironments(
     setFilter(result.slice(startNumber, endNumber));
     setNumberOfFound(result.length);
     setNumberOfPages(Math.ceil(result.length / elementOnPageCount));
-    // console.log('filter', filter, searchObject);
   };
 
   const openModal = (id) => {
@@ -83,12 +82,12 @@ export default function SearchEnvironments(
   };
 
   React.useEffect(() => {
-    filteredPreorders(code, title, description, numberOfPage);
-  }, [code, title, description, numberOfPage, filteredPreorders]);
+    filteredEnvironments(code, title, description, numberOfPage);
+  }, [code, title, description, numberOfPage, filteredEnvironments]);
 
   const onCodeChanged = (e) => {
     setCode(e.target.value);
-    filteredPreorders(
+    filteredEnvironments(
       e.target.value,
       title,
       description,
@@ -97,7 +96,7 @@ export default function SearchEnvironments(
   };
   const onTitleChanged = (e) => {
     setTitle(e.target.value);
-    filteredPreorders(
+    filteredEnvironments(
       code,
       e.target.value,
       description,
@@ -106,7 +105,7 @@ export default function SearchEnvironments(
   };
   const onDescriptionChanged = (e) => {
     setDescription(e.target.value);
-    filteredPreorders(
+    filteredEnvironments(
       code,
       title,
       e.target.value,
@@ -116,11 +115,23 @@ export default function SearchEnvironments(
 
   const paginationHandleChange = (e, page) => {
     setNumberOfPage(page);
-    filteredPreorders(
+    filteredEnvironments(
       code,
       title,
       description,
       page,
+    );
+  };
+
+  const clearAll = () => {
+    setCode('');
+    setTitle('');
+    setDescription('');
+    filteredEnvironments(
+      '',
+      '',
+      '',
+      numberOfPage,
     );
   };
 
@@ -142,6 +153,7 @@ export default function SearchEnvironments(
               onCodeChanged,
               onTitleChanged,
               onDescriptionChanged,
+              clearAll,
             }
           }
           isOpenSearchBar={isOpenSearchBar}
@@ -173,7 +185,7 @@ export default function SearchEnvironments(
         style={customStyles}
         contentLabel="Environment"
       >
-        <SingleFormEnvironments id={selectId} closeEvent={closeModal} />
+        <SingleFormEnvironments id={selectId.toString()} closeEvent={closeModal} />
       </Modal>
       <div
         className="search-environments__pagination"

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  Chip,
   Table, TableBody, TableCell, TableHead, TableRow,
 } from '@mui/material';
 import Modal from 'react-modal';
@@ -34,6 +35,14 @@ export default function SearchResultsPreorders({
     setIsOpen(false);
   };
 
+  const statusColors = {
+    NEW: 'secondary',
+    APPROVED: 'success',
+    IN_WORK: 'warning',
+    COMPLETED: 'info',
+    СANCELED: 'error',
+  };
+
   return (
     <div
       className="search-results-preorders"
@@ -42,8 +51,13 @@ export default function SearchResultsPreorders({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell align="left">User</TableCell>
-              <TableCell align="right">Status</TableCell>
+              <TableCell className="search-results-preorders__table-cell" align="left">Наименование</TableCell>
+              <TableCell className="search-results-preorders__table-cell" align="left">Тип потребности</TableCell>
+              <TableCell className="search-results-preorders__table-cell" align="left">Конфигурация</TableCell>
+              <TableCell className="search-results-preorders__table-cell" align="left">Среда</TableCell>
+              <TableCell className="search-results-preorders__table-cell" align="left">ЦОДы</TableCell>
+              <TableCell className="search-results-preorders__table-cell" align="left">Признак репликации</TableCell>
+              <TableCell className="search-results-preorders__table-cell" align="left">Статус</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -57,9 +71,24 @@ export default function SearchResultsPreorders({
                       component="th"
                       scope="row"
                     >
-                      <PreorderItem id={preorder.id} name={preorder.regNumber} event={openModal} />
+                      <PreorderItem align="left" id={preorder.id} name={preorder.regNumber ? preorder.regNumber : 'нет данных'} event={openModal} />
                     </TableCell>
-                    <TableCell align="right">{preorder.status}</TableCell>
+                    <TableCell align="left">{preorder.preorderType ? preorder.preorderType : 'нет данных'}</TableCell>
+                    <TableCell align="left">{preorder.configuration ? preorder.configuration.code : 'нет данных'}</TableCell>
+                    <TableCell align="left">{preorder.environment ? preorder.environment.code : 'нет данных'}</TableCell>
+                    <TableCell align="left">
+                      {preorder.datacenters && preorder.datacenters.length !== 0
+                        ? preorder.datacenters
+                          .map((datacenter) => (datacenter && datacenter.code ? datacenter.code : ''))
+                          .join(', ') : 'нет данных'}
+                    </TableCell>
+                    <TableCell align="left">{preorder.isReplication ? 'есть' : 'нет'}</TableCell>
+                    <TableCell align="left">
+                      <Chip
+                        label={preorder.status ? preorder.status : 'нет данных'}
+                        color={statusColors[preorder.status]}
+                      />
+                    </TableCell>
                   </TableRow>
                 ),
               )
@@ -74,7 +103,7 @@ export default function SearchResultsPreorders({
           contentLabel="Preorder"
         >
           <SingleFormPreorders
-            id={selectId}
+            id={selectId.toString()}
             closeEvent={closeModal}
           />
         </Modal>
@@ -88,7 +117,7 @@ SearchResultsPreorders.propTypes = {
   data: PropTypes.shape({
     filter: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.number,
+        id: PropTypes.string,
         regNumber: PropTypes.string,
         status: PropTypes.string,
       }).isRequired,
