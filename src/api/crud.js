@@ -1,22 +1,30 @@
 import axios from 'axios';
 
-const localhost = 'http://localhost:4000'
+const localhost = 'http://localhost:4000';
 
-async function makeRequest(method, endpoint, data, filter) {
+async function makeRequest(method, endpoint, data = null, filter = null) {
   try {
-    let url = `${localhost}/${endpoint}`;
-    
-    if (filter) {
-      const params = new URLSearchParams(filter);
-      url += `?${params.toString()}`;
+    const url = `${localhost}/${endpoint}`;
+
+    let response = (await axios({ method, url, data })).data;
+
+    if (filter && Object.keys(filter).length !== 0) {
+      response = response.filter(
+        (obj) => Object.entries(filter)
+          .every(
+            ([keyFilter, valueFilter]) => {
+              const objValue = obj[keyFilter];
+              return objValue !== undefined
+                && objValue.toLowerCase().includes(valueFilter.toLowerCase());
+            },
+          ),
+      );
     }
 
-    const response = await axios({ method, url, data });
-
-    return response.data;
+    return response;
   } catch (error) {
     console.error(`Error making ${method} request to ${endpoint}:`, error);
-    throw error;
+    return null;
   }
 }
 
@@ -44,24 +52,59 @@ async function getAllPreorders() {
 
 async function searchPreorders(filter) {
   try {
-    let response = await getAllPreorders();
-    const filteredResponse = response.filter(obj => {
-      if (filter.regNumber && !(obj.regNumber.includes(filter.regNumber))) {
+    const response = await getAllPreorders();
+    let filteredResponse = response.filter((obj) => {
+      // if ((obj.preorderType === null && filter.preorderType)
+      //   || (obj.configurationId === null && filter.configurationId)
+      //   || (obj.environmentId === null && filter.environmentId)
+      //   || (obj.datacenterIds === null && filter.datacenterIds)
+      //   || (obj.status === null && filter.status)
+      // ) {
+      //   return false;
+      // }
+      if (filter.regNumber
+        && !(obj.regNumber.toLowerCase().includes(filter.regNumber.toLowerCase()))) {
         return false;
       }
-      if (filter.preorderType && !(obj.preorderType.includes(filter.preorderType))) {
+      if (filter.preorderType
+        && obj.preorderType
+        && !(obj.preorderType.includes(filter.preorderType))) {
         return false;
       }
-      if (filter.configurationId && !(obj.configurationId.id === filter.configurationId.id)) {
+      if (filter.configuration
+        && obj.configurationId
+        && !(obj.configurationId.id === filter.configuration.id)) {
         return false;
       }
-      if (filter.environmentId && !(obj.environmentId.id === filter.environmentId.id)) {
+      if (filter.environment
+        && obj.environmentId
+        && !(obj.environmentId.id === filter.environment.id)) {
         return false;
       }
-      if (filter.datacenterIds && !(obj.datacenterIds.id === filter.datacenterIds.id)) {
+      if (filter.datacenters
+        && obj.datacenterIds
+        && !(filter.datacenters
+          .every(
+            (id) => obj.datacenterIds
+              .map(
+                (datacenterId) => {
+                  if (datacenterId) {
+                    return datacenterId.id;
+                  }
+                  return null;
+                },
+              )
+              .includes(id),
+          )
+        )
+      ) {
         return false;
       }
-      if (filter.isReplication && !(obj.isReplication.includes(filter.isReplication))) {
+      if (
+        'isReplication' in filter
+        && 'isReplication' in obj
+        && obj.isReplication !== filter.isReplication
+      ) {
         return false;
       }
       if (filter.status && !(obj.status.includes(filter.status))) {
@@ -69,10 +112,18 @@ async function searchPreorders(filter) {
       }
       return true;
     });
+    filteredResponse = filteredResponse.map((preorder) => {
+      return {
+        ...preorder,
+        configuration: preorder.configurationId,
+        environment: preorder.environmentId,
+        datacenters: preorder.datacenterIds,
+      };
+    });
     return filteredResponse;
   } catch (error) {
     console.error('Error getting all filtered preorders:', error);
-    throw error;
+    return null;
   }
 }
 

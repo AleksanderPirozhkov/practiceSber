@@ -1,0 +1,8 @@
+.search-results-preorders {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-results-preorders__table-cell {
+  width: 200px;
+}

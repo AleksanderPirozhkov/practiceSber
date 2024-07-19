@@ -1,0 +1,17 @@
+.work-bar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 15px;
+  padding-left: 80px;
+  padding-right: 70px;
+}
+
+.work-bar__title {
+  align-self: flex-start;
+  font-weight: bold;
+}
+
+.work-bar__button {
+  align-self: flex-end;
+}

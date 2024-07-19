@@ -1,0 +1,12 @@
+.user-info {
+  display: flex;
+  flex-direction: row;
+  background-color: grey;
+  justify-content: flex-end;
+  align-items: center;
+  border-radius: 20px;
+}
+
+.user-info__name {
+  padding: 10px;
+}

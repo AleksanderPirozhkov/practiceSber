@@ -1,0 +1,8 @@
+.search-bar-select {
+  z-index: 0;
+}
+
+.search-bar-select__select {
+  width: 200px;
+  height: 60px;
+}

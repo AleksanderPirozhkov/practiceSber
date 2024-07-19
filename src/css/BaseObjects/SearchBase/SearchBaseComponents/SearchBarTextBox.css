@@ -1,0 +1,6 @@
+.search-bar-textbox {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  z-index: 0;
+}

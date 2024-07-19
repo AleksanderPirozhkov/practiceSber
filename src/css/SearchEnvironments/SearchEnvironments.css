@@ -1,0 +1,9 @@
+.search-environments {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: flex-start; */
+}
+
+.search-environments__pagination {
+  align-self: flex-end;
+}
